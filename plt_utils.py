@@ -41,7 +41,7 @@ def grayshow(image, clip=None, ax=None, heat=False):
 
     """
     assert image.ndim == 2, 'Can only display 2D images using this function'
-    image = image.astype('float32')
+    image = image.astype(np.float32)
     if clip:
         assert len(clip) == 2 and clip[0] < clip[1], 'Invalid range argument: {}'.format(range)
         image = np.clip(image, clip[0], clip[1])
@@ -68,7 +68,7 @@ def colorshow(image, ax=None):
     if ax is None:
         ax = plt.gca()
     if image.dtype != np.uint8:
-        image = image.astype('float32')
+        image = image.astype(np.float32)
         image = (image - image.min())/image.max()
     ax.imshow(image, interpolation='none')
     plt.draw()
@@ -114,14 +114,14 @@ def mosaic(images, num_row=None, num_col=None, normalize=False, clip=None, paddi
                     num_col*im_shape[1] + padding*(num_col-1))
     if len(im_shape) == 3:
         result_shape = result_shape + (3,)
-    result = np.zeros(result_shape, dtype='float32')
+    result = np.zeros(result_shape, dtype=np.float32)
     im_iter = iter(images)
     for row in range(num_row):
         for col in range(num_col):
             row_start = row * (im_shape[0] + padding)
             col_start = col * (im_shape[1] + padding)
             try:
-                image = (im_iter.next()).astype('float32')
+                image = (im_iter.next()).astype(np.float32)
             except StopIteration:
                 break
             if normalize:
