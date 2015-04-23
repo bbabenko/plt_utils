@@ -69,11 +69,12 @@ def colorshow(image, ax=None):
         ax = plt.gca()
     if image.dtype != np.uint8:
         image = image.astype(np.float32)
-        image = (image - image.min())/image.max()
+        image = image - image.min()
+        image = image / image.max()
     ax.imshow(image, interpolation='none')
     plt.draw()
     plt.show()
-    
+
 def mosaic(images, num_row=None, num_col=None, normalize=False, clip=None, padding=1):
     """
     Stitch multiple images (2D or 3-channel 3D numpy arrays) into one.  All images must be of
@@ -86,7 +87,7 @@ def mosaic(images, num_row=None, num_col=None, normalize=False, clip=None, paddi
     images : list of NxM or NxMx3 numpy arrays
     num_row : number of rows in the mosaic
     num_col : number of columns in the mosaic
-    normalize : normalize each image to have max value = 1, min value = 0 (this is done *before* 
+    normalize : normalize each image to have max value = 1, min value = 0 (this is done *before*
         clipping)
     clip : (min_val, max_val) tuple, each image will be clipped to these values (see np.clip)
     padding : number of pixels of black padding to insert in between images
@@ -103,13 +104,13 @@ def mosaic(images, num_row=None, num_col=None, normalize=False, clip=None, paddi
     elif not num_row and not num_col:
         num_col = int(np.ceil(np.sqrt(num_images)))
         num_row = int(np.ceil(float(num_images)/num_col))
-        
+
     im_shape = images[0].shape
     assert all([i.shape == im_shape for i in images]), 'Images must have the same shape'
     assert num_images <= num_row*num_col, 'More images than grid cells'
     assert not clip or len(clip) == 2 and clip[0] < clip[1], (
             'Invalid range argument: {}'.format(range))
-    
+
     result_shape = (num_row*im_shape[0] + padding*(num_row-1),
                     num_col*im_shape[1] + padding*(num_col-1))
     if len(im_shape) == 3:
@@ -130,13 +131,13 @@ def mosaic(images, num_row=None, num_col=None, normalize=False, clip=None, paddi
                 image = np.clip(image, clip[0], clip[1])
             result[row_start:row_start+im_shape[0], col_start:col_start+im_shape[1],...] = image
     return result
-    
+
 def imshow(image, ax=None, split=False):
     """
-    Convenience wrapper around grayshow and colorshow.  The main input is a numpy array.  If the 
-    array is 2D, it is displayed as a grayscale image (via grayshow()). If the array is NxMx3, 
+    Convenience wrapper around grayshow and colorshow.  The main input is a numpy array.  If the
+    array is 2D, it is displayed as a grayscale image (via grayshow()). If the array is NxMx3,
     it is displayed as a color image (via colorshow()).  If the image NxMxC where C!=3 or if split
-    is True, the channels of the image will be stitched into a mosaic (with normalization turned 
+    is True, the channels of the image will be stitched into a mosaic (with normalization turned
     on), and displayed as a grayscale image.
 
     Parameters
