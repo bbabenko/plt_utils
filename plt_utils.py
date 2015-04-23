@@ -126,7 +126,8 @@ def mosaic(images, num_row=None, num_col=None, normalize=False, clip=None, paddi
             except StopIteration:
                 break
             if normalize:
-                image = (image - image.min())/image.max()
+                image = image - image.min()
+                image = image / image.max()
             if clip:
                 image = np.clip(image, clip[0], clip[1])
             result[row_start:row_start+im_shape[0], col_start:col_start+im_shape[1],...] = image
